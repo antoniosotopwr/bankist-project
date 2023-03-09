@@ -82,6 +82,15 @@ const displayMovements = function (movements) {
 
 displayMovements(account1.movements);
 
+//REDUCE example
+//function to sum all the movements and show it in the app
+const calcDisplayBalance = function (movements) {
+  const balance = movements.reduce((acc, mov) => acc + mov, 0);
+  labelBalance.textContent = `${balance} EUR`;
+};
+
+calcDisplayBalance(account1.movements);
+
 //MAP example
 //function to create an abreviation of the names from account's array
 const createUsernames = function (accs) {
@@ -110,23 +119,10 @@ const movements = [200, 450, -400, 3000, -650, -130, 70, 1300];
 
 /////////////////////////////////////////////////
 
-// MAP METHOD
-const eurToUsd = 1.1;
-//map create a new array
-const movementsUSD = movements.map(mov => {
-  return mov * eurToUsd;
+const deposits = movements.filter(mov => {
+  return mov > 0;
 });
-console.log(movements);
-console.log(movementsUSD);
 
-// We could do this instead of the above example:
-const movementsUSDfor = [];
-for (const mov of movements) movementsUSDfor.push(mov * eurToUsd);
-console.log(movementsUSDfor);
-
-//Another example of MAP
-const movementsDescriptions = movements.map((mov, i) => {
-  `Movement ${i + 1}: You ${mov > 0 ? 'deposited' : 'withdrew'} ${Math.abs(
-    mov
-  )}`;
+const withdrawals = movements.filter(mov => {
+    return mov < 0;
 });
