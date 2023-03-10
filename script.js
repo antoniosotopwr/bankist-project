@@ -91,6 +91,32 @@ const calcDisplayBalance = function (movements) {
 
 calcDisplayBalance(account1.movements);
 
+// Chaining methods
+//Function to show the movements summary
+const calcDisplaySummary = function (movements) {
+  const incomes = movements
+    .filter(mov => mov > 0)
+    .reduce((acc, mov) => acc + mov, 0);
+  labelSumIn.textContent = `${incomes}€`;
+
+  const outcomes = movements
+    .filter(mov => mov < 0)
+    .reduce((acc, mov) => acc + mov, 0);
+  labelSumOut.textContent = `${Math.abs(outcomes)}€`;
+
+  const interest = movements
+    .filter(mov => mov > 0)
+    .map(deposit => (deposit * 1.2) / 100)
+    .filter((interest, i, arr) => {
+      // console.log(arr);
+      return interest >= 1;
+    })
+    .reduce((acc, interest) => acc + interest, 0);
+  labelSumInterest.textContent = `${interest}€`;
+};
+
+calcDisplaySummary(account1.movements);
+
 //MAP example
 //function to create an abreviation of the names from account's array
 const createUsernames = function (accs) {
@@ -124,5 +150,5 @@ const deposits = movements.filter(mov => {
 });
 
 const withdrawals = movements.filter(mov => {
-    return mov < 0;
+  return mov < 0;
 });
