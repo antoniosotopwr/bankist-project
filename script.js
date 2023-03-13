@@ -80,16 +80,12 @@ const displayMovements = function (movements) {
   });
 };
 
-displayMovements(account1.movements);
-
 //REDUCE example
 //function to sum all the movements and show it in the app
 const calcDisplayBalance = function (movements) {
   const balance = movements.reduce((acc, mov) => acc + mov, 0);
   labelBalance.textContent = `${balance} EUR`;
 };
-
-calcDisplayBalance(account1.movements);
 
 // Chaining methods
 //Function to show the movements summary
@@ -115,8 +111,6 @@ const calcDisplaySummary = function (movements) {
   labelSumInterest.textContent = `${interest}€`;
 };
 
-calcDisplaySummary(account1.movements);
-
 //MAP example
 //function to create an abreviation of the names from account's array
 const createUsernames = function (accs) {
@@ -130,6 +124,37 @@ const createUsernames = function (accs) {
 };
 createUsernames(accounts);
 console.log(accounts);
+
+//Function to create the login
+let currentAccount;
+
+btnLogin.addEventListener('click', function (e) {
+  //prevent form from submitting
+  e.preventDefault();
+
+  currentAccount = accounts.find(acc => {
+    return acc.username === inputLoginUsername.value;
+  });
+
+  console.log(currentAccount);
+
+  if (currentAccount?.pin === Number(inputLoginPin.value)) {
+    //Display UI and message
+    labelWelcome.textContent = `Welcome back, ${
+      currentAccount.owner.split()[0]
+    }`;
+    containerApp.style.opacity = 100;
+
+    //Display movements
+    displayMovements(currentAccount.movements);
+
+    //Display balance
+    calcDisplayBalance(currentAccount.movements);
+
+    //display summary
+    calcDisplaySummary(currentAccount.movements);
+  }
+});
 
 /////////////////////////////////////////////////
 /////////////////////////////////////////////////
