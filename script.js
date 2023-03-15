@@ -143,6 +143,7 @@ btnLogin.addEventListener('click', function (e) {
   //prevent form from submitting
   e.preventDefault();
 
+  //check the current username account
   currentAccount = accounts.find(acc => {
     return acc.username === inputLoginUsername.value;
   });
@@ -167,6 +168,7 @@ btnLogin.addEventListener('click', function (e) {
   }
 });
 
+//Function to transfer money to other account
 btnTransfer.addEventListener('click', function (e) {
   e.preventDefault();
   const amount = Number(inputTransferAmount.value);
@@ -190,6 +192,29 @@ btnTransfer.addEventListener('click', function (e) {
     //Update UI
     updateUI(currentAccount);
   }
+});
+
+//Function to close the session using findIndex
+btnClose.addEventListener('click', function (e) {
+  e.preventDefault();
+
+  if (
+    currentAccount.username === inputCloseUsername.value &&
+    currentAccount.pin === Number(inputClosePin.value)
+  ) {
+    const index = accounts.findIndex(
+      acc => acc.username === currentAccount.username
+    );
+
+    console.log(index);
+
+    //Delete account
+    accounts.splice(index, 1);
+
+    //Hide UI
+    containerApp.style.opacity = 0;
+  }
+  inputCloseUsername.value = inputClosePin.value = '';
 });
 
 /////////////////////////////////////////////////
