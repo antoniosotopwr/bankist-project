@@ -82,9 +82,9 @@ const displayMovements = function (movements) {
 
 //REDUCE example
 //function to sum all the movements and show it in the app
-const calcDisplayBalance = function (movements) {
-  const balance = movements.reduce((acc, mov) => acc + mov, 0);
-  labelBalance.textContent = `${balance} EUR`;
+const calcDisplayBalance = function (acc) {
+  acc.balance = acc.movements.reduce((acc, mov) => acc + mov, 0);
+  labelBalance.textContent = `${acc.balance} EUR`;
 };
 
 // Chaining methods
@@ -115,6 +115,7 @@ const calcDisplaySummary = function (account) {
 //function to create an abreviation of the names from account's array
 const createUsernames = function (accs) {
   accs.forEach(function (acc) {
+    //adding the property username
     acc.username = acc.owner
       .toLowerCase()
       .split(' ')
@@ -123,7 +124,17 @@ const createUsernames = function (accs) {
   });
 };
 createUsernames(accounts);
-console.log(accounts);
+
+const updateUI = function (acc) {
+  //Display movements
+  displayMovements(acc.movements);
+
+  //Display balance
+  calcDisplayBalance(acc);
+
+  //display summary
+  calcDisplaySummary(acc);
+};
 
 //Function to create the login
 let currentAccount;
@@ -152,15 +163,7 @@ btnLogin.addEventListener('click', function (e) {
     // inputLoginUsername.disabled = true;
     // inputLoginPin.disabled = true;
 
-
-    //Display movements
-    displayMovements(currentAccount.movements);
-
-    //Display balance
-    calcDisplayBalance(currentAccount.movements);
-
-    //display summary
-    calcDisplaySummary(currentAccount);
+    updateUI(currentAccount);
   }
 });
 
