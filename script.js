@@ -4,7 +4,6 @@ var head = document.head || document.getElementsByTagName('head')[0];
 /////////////////////////////////////////////////
 // BANKIST APP
 
-
 // const account1 = {
 //   owner: 'Jonas Schmedtmann',
 //   movements: [200, 450, -400, 3000, -650, -130, 70, 1300],
@@ -186,6 +185,11 @@ const updateUI = function (acc) {
 //Function to create the login
 let currentAccount;
 
+//FAKE ALWAYS LOGGED IN
+currentAccount = account1;
+updateUI(currentAccount);
+containerApp.style.opacity = 100;
+
 btnLogin.addEventListener('click', function (e) {
   //prevent form from submitting
   e.preventDefault();
@@ -289,6 +293,17 @@ btnSort.addEventListener('click', function (e) {
   displayMovements(currentAccount.movements, !sorted);
   sorted = !sorted;
 });
+
+//Add current date to label date, below current balance
+const now = new Date();
+let year = now.getFullYear();
+let month = `${now.getMonth() + 1}`.padStart(2, '0');
+let day = `${now.getDate()}`.padStart(2, '0');
+let hour = now.getHours();
+let minutes = now.getMinutes();
+let currentDateDisplay = `${month}/${day}/${year}, ${hour}:${minutes}`;
+
+labelDate.textContent = currentDateDisplay;
 
 /////////////////////////////////////////////////
 /////////////////////////////////////////////////
