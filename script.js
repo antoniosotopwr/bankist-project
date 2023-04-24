@@ -104,20 +104,30 @@ const inputCloseUsername = document.querySelector('.form__input--user');
 const inputClosePin = document.querySelector('.form__input--pin');
 
 //Function to add html content or create dom elements
-const displayMovements = function (movements, sort = false) {
+const displayMovements = function (acc, sort = false) {
   containerMovements.innerHTML = '';
   //textContent = 0;
 
   // Added functionality to sort the movements array
-  const movs = sort ? movements.slice().sort((a, b) => a - b) : movements;
+  const movs = sort
+    ? acc.movements.slice().sort((a, b) => a - b)
+    : acc.movements;
 
   movs.forEach((mov, i) => {
+    //display moveventsDates
+    let date = new Date(acc.movementsDates[i]);
+    let year = date.getFullYear();
+    let month = `${date.getMonth() + 1}`.padStart(2, '0');
+    let day = `${date.getDate()}`.padStart(2, '0');
+    let displayDate = `${month}/${day}/${year}`;
+
     const type = mov > 0 ? 'deposit' : 'withdrawal';
     const html = `
     <div class="movements__row">
       <div class="movements__type movements__type--${type}">${
       i + 1
     } ${type}</div>
+    <div class="movements__date">${displayDate}</div>
       <div class="movements__value">${mov.toFixed(2)}</div>
     </div>`;
 
@@ -173,7 +183,7 @@ createUsernames(accounts);
 //Function to update the UI
 const updateUI = function (acc) {
   //Display movements
-  displayMovements(acc.movements);
+  displayMovements(acc);
 
   //Display balance
   calcDisplayBalance(acc);
@@ -186,9 +196,9 @@ const updateUI = function (acc) {
 let currentAccount;
 
 //FAKE ALWAYS LOGGED IN
-currentAccount = account1;
-updateUI(currentAccount);
-containerApp.style.opacity = 100;
+// currentAccount = account1;
+// updateUI(currentAccount);
+// containerApp.style.opacity = 100;
 
 btnLogin.addEventListener('click', function (e) {
   //prevent form from submitting
@@ -207,6 +217,17 @@ btnLogin.addEventListener('click', function (e) {
       currentAccount.owner.split(' ')[0]
     }`;
     containerApp.style.opacity = 100;
+
+    // Add current date to label date, below current balance
+    const now = new Date();
+    let year = now.getFullYear();
+    let month = `${now.getMonth() + 1}`.padStart(2, '0');
+    let day = `${now.getDate()}`.padStart(2, '0');
+    let hour = now.getHours();
+    let minutes = `${now.getMinutes()}`.padStart(2, '0');
+    let currentDateDisplay = `${month}/${day}/${year}, ${hour}:${minutes}`;
+    console.log(currentDateDisplay);
+    labelDate.textContent = currentDateDisplay;
 
     inputLoginUsername.value = inputLoginPin.value = '';
 
@@ -239,6 +260,9 @@ btnTransfer.addEventListener('click', function (e) {
     //Doing the transfer
     currentAccount.movements.push(-amount);
     receiverAcc.movements.push(amount);
+    //add transfer date
+    currentAccount.movementsDates.push(new Date().toISOString());
+    receiverAcc.movementsDates.push(new Date().toISOString());
 
     //Update UI
     updateUI(currentAccount);
@@ -256,6 +280,8 @@ btnLoan.addEventListener('click', function (e) {
   if (amount > 0 && currentAccount.movements.some(mov => mov >= amount * 0.1)) {
     //Add movement
     currentAccount.movements.push(amount);
+    // add loan date
+    currentAccount.movementsDates.push(new Date().toISOString());
 
     //Update UI
     updateUI(currentAccount);
@@ -290,20 +316,20 @@ btnClose.addEventListener('click', function (e) {
 let sorted = false;
 btnSort.addEventListener('click', function (e) {
   e.preventDefault();
-  displayMovements(currentAccount.movements, !sorted);
+  displayMovements(currentAccount, !sorted);
   sorted = !sorted;
 });
 
 //Add current date to label date, below current balance
-const now = new Date();
-let year = now.getFullYear();
-let month = `${now.getMonth() + 1}`.padStart(2, '0');
-let day = `${now.getDate()}`.padStart(2, '0');
-let hour = now.getHours();
-let minutes = now.getMinutes();
-let currentDateDisplay = `${month}/${day}/${year}, ${hour}:${minutes}`;
+// const now = new Date();
+// let year = now.getFullYear();
+// let month = `${now.getMonth() + 1}`.padStart(2, '0');
+// let day = `${now.getDate()}`.padStart(2, '0');
+// let hour = now.getHours();
+// let minutes = `${now.getMinutes()}`.padStart(2, '0');
+// let currentDateDisplay = `${month}/${day}/${year}, ${hour}:${minutes}`;
 
-labelDate.textContent = currentDateDisplay;
+// labelDate.textContent = currentDateDisplay;
 
 /////////////////////////////////////////////////
 /////////////////////////////////////////////////
