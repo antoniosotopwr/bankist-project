@@ -104,20 +104,21 @@ const inputCloseUsername = document.querySelector('.form__input--user');
 const inputClosePin = document.querySelector('.form__input--pin');
 
 // FUNCTIONS
-const formatMovementDate = function (date) {
+const formatMovementDate = function (date,locale) {
   const calcDaysPassed = (date1, date2) =>
     Math.round(Math.abs(date2 - date1) / (1000 * 60 * 60 * 24));
 
   const daysPassed = calcDaysPassed(new Date(), date);
-  console.log(daysPassed);
+  // console.log(daysPassed);
   if (daysPassed === 0) return 'Today';
   if (daysPassed === 1) return 'Yesterday';
   if (daysPassed <= 7) return `${daysPassed} days ago`;
 
-  let year = date.getFullYear();
-  let month = `${date.getMonth() + 1}`.padStart(2, '0');
-  let day = `${date.getDate()}`.padStart(2, '0');
-  return `${month}/${day}/${year}`;
+  return Intl.DateTimeFormat(locale).format(date);
+  // let year = date.getFullYear();
+  // let month = `${date.getMonth() + 1}`.padStart(2, '0');
+  // let day = `${date.getDate()}`.padStart(2, '0');
+  // return `${month}/${day}/${year}`;
 };
 
 //Function to add html content or create dom elements
@@ -133,7 +134,7 @@ const displayMovements = function (acc, sort = false) {
   movs.forEach((mov, i) => {
     //display moveventsDates
     let date = new Date(acc.movementsDates[i]);
-    let displayDate = formatMovementDate(date);
+    let displayDate = formatMovementDate(date,acc.locale);
 
     const type = mov > 0 ? 'deposit' : 'withdrawal';
     const html = `
@@ -234,14 +235,26 @@ btnLogin.addEventListener('click', function (e) {
 
     // Add current date to label date, below current balance
     const now = new Date();
-    let year = now.getFullYear();
-    let month = `${now.getMonth() + 1}`.padStart(2, '0');
-    let day = `${now.getDate()}`.padStart(2, '0');
-    let hour = now.getHours();
-    let minutes = `${now.getMinutes()}`.padStart(2, '0');
-    let currentDateDisplay = `${month}/${day}/${year}, ${hour}:${minutes}`;
-    console.log(currentDateDisplay);
-    labelDate.textContent = currentDateDisplay;
+    const options = {
+      hour: 'numeric',
+      minute: 'numeric',
+      day: 'numeric',
+      month: 'numeric',
+      year: 'numeric',
+      // weekday: 'long',
+    };
+    labelDate.textContent = new Intl.DateTimeFormat(
+      currentAccount.locale,
+      options
+    ).format(now);
+    // let year = now.getFullYear();
+    // let month = `${now.getMonth() + 1}`.padStart(2, '0');
+    // let day = `${now.getDate()}`.padStart(2, '0');
+    // let hour = now.getHours();
+    // let minutes = `${now.getMinutes()}`.padStart(2, '0');
+    // let currentDateDisplay = `${month}/${day}/${year}, ${hour}:${minutes}`;
+    // console.log(currentDateDisplay);
+    // labelDate.textContent = currentDateDisplay;
 
     inputLoginUsername.value = inputLoginPin.value = '';
 
