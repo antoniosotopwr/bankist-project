@@ -104,7 +104,7 @@ const inputCloseUsername = document.querySelector('.form__input--user');
 const inputClosePin = document.querySelector('.form__input--pin');
 
 // FUNCTIONS
-const formatMovementDate = function (date,locale) {
+const formatMovementDate = function (date, locale) {
   const calcDaysPassed = (date1, date2) =>
     Math.round(Math.abs(date2 - date1) / (1000 * 60 * 60 * 24));
 
@@ -121,6 +121,14 @@ const formatMovementDate = function (date,locale) {
   // return `${month}/${day}/${year}`;
 };
 
+//function to format numbers with Intl
+const formatCur = function (value, locale, currency) {
+  return new Intl.NumberFormat(locale, {
+    style: 'currency',
+    currency: currency,
+  }).format(value);
+};
+
 //Function to add html content or create dom elements
 const displayMovements = function (acc, sort = false) {
   containerMovements.innerHTML = '';
@@ -134,8 +142,9 @@ const displayMovements = function (acc, sort = false) {
   movs.forEach((mov, i) => {
     //display moveventsDates
     let date = new Date(acc.movementsDates[i]);
-    let displayDate = formatMovementDate(date,acc.locale);
+    let displayDate = formatMovementDate(date, acc.locale);
 
+    //add format to number with Intl line 155
     const type = mov > 0 ? 'deposit' : 'withdrawal';
     const html = `
     <div class="movements__row">
@@ -143,7 +152,11 @@ const displayMovements = function (acc, sort = false) {
       i + 1
     } ${type}</div>
     <div class="movements__date">${displayDate}</div>
-      <div class="movements__value">${mov.toFixed(2)}</div>
+      <div class="movements__value">${formatCur(
+        mov,
+        acc.locale,
+        acc.currency
+      )}</div>
     </div>`;
 
     containerMovements.insertAdjacentHTML('afterbegin', html);
@@ -154,7 +167,7 @@ const displayMovements = function (acc, sort = false) {
 //function to sum all the movements and show it in the app
 const calcDisplayBalance = function (acc) {
   acc.balance = acc.movements.reduce((acc, mov) => acc + mov, 0);
-  labelBalance.textContent = `${acc.balance.toFixed(2)} EUR`;
+  labelBalance.textContent = formatCur(acc.balance, acc.locale, acc.currency);
 };
 
 // Chaining methods
@@ -163,12 +176,16 @@ const calcDisplaySummary = function (account) {
   const incomes = account.movements
     .filter(mov => mov > 0)
     .reduce((acc, mov) => acc + mov, 0);
-  labelSumIn.textContent = `${incomes.toFixed(2)}€`;
+  labelSumIn.textContent = formatCur(incomes, account.locale, account.currency);
 
   const outcomes = account.movements
     .filter(mov => mov < 0)
     .reduce((acc, mov) => acc + mov, 0);
-  labelSumOut.textContent = `${Math.abs(outcomes.toFixed(2))}€`;
+  labelSumOut.textContent = formatCur(
+    Math.abs(outcomes),
+    account.locale,
+    account.currency
+  );
 
   const interest = account.movements
     .filter(mov => mov > 0)
@@ -178,7 +195,11 @@ const calcDisplaySummary = function (account) {
       return interest >= 1;
     })
     .reduce((acc, interest) => acc + interest, 0);
-  labelSumInterest.textContent = `${interest.toFixed(2)}€`;
+  labelSumInterest.textContent = formatCur(
+    interest,
+    account.locale,
+    account.currency
+  );
 };
 
 //MAP example
