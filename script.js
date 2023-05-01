@@ -228,6 +228,28 @@ const updateUI = function (acc) {
   calcDisplaySummary(acc);
 };
 
+const startLogOutTimer = function () {
+  //Set time to 5 seconds
+  let time = 10;
+
+  //Call the timer every seconds
+  const timer = setInterval(function () {
+    const min = String(Math.trunc(time / 60)).padStart(2, 0);
+    const sec = String(time % 60).padStart(2, 0);
+    //In each call, print the remaining ui
+    labelTimer.textContent = `${min}:${sec}`;
+
+    //Decrese ls
+    time--;
+    //When 0 seconds, stop timer and log user
+    if (time === 0) {
+      clearInterval(timer);
+      labelWelcome.textContent = 'Log in to get started';
+      containerApp.style.opacity = 0;
+    }
+  }, 1000);
+};
+
 //Function to create the login
 let currentAccount;
 
@@ -283,7 +305,8 @@ btnLogin.addEventListener('click', function (e) {
 
     // inputLoginUsername.disabled = true;
     // inputLoginPin.disabled = true;
-
+    //START TIMER
+    startLogOutTimer();
     updateUI(currentAccount);
   }
 });
