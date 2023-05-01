@@ -229,11 +229,7 @@ const updateUI = function (acc) {
 };
 
 const startLogOutTimer = function () {
-  //Set time to 5 seconds
-  let time = 10;
-
-  //Call the timer every seconds
-  const timer = setInterval(function () {
+  let tick = function () {
     const min = String(Math.trunc(time / 60)).padStart(2, 0);
     const sec = String(time % 60).padStart(2, 0);
     //In each call, print the remaining ui
@@ -247,7 +243,13 @@ const startLogOutTimer = function () {
       labelWelcome.textContent = 'Log in to get started';
       containerApp.style.opacity = 0;
     }
-  }, 1000);
+  };
+  //Set time to 5 seconds
+  let time = 10;
+
+  //Call the timer every seconds
+  tick();
+  const timer = setInterval(tick, 1000);
 };
 
 //Function to create the login
