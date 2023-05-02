@@ -162,6 +162,8 @@ const displayMovements = function (acc, sort = false) {
     containerMovements.insertAdjacentHTML('afterbegin', html);
   });
 };
+//Function to create the login
+let currentAccount, timer;
 
 //REDUCE example
 //function to sum all the movements and show it in the app
@@ -235,25 +237,23 @@ const startLogOutTimer = function () {
     //In each call, print the remaining ui
     labelTimer.textContent = `${min}:${sec}`;
 
-    //Decrese ls
-    time--;
     //When 0 seconds, stop timer and log user
     if (time === 0) {
       clearInterval(timer);
       labelWelcome.textContent = 'Log in to get started';
       containerApp.style.opacity = 0;
     }
+    //Decrese ls
+    time--;
   };
   //Set time to 5 seconds
-  let time = 10;
+  let time = 120;
 
   //Call the timer every seconds
   tick();
   const timer = setInterval(tick, 1000);
+  return timer;
 };
-
-//Function to create the login
-let currentAccount;
 
 //FAKE ALWAYS LOGGED IN
 // currentAccount = account1;
@@ -307,8 +307,11 @@ btnLogin.addEventListener('click', function (e) {
 
     // inputLoginUsername.disabled = true;
     // inputLoginPin.disabled = true;
+
     //START TIMER
-    startLogOutTimer();
+    if (timer) clearInterval(timer);
+
+    timer = startLogOutTimer();
     updateUI(currentAccount);
   }
 });
@@ -339,6 +342,9 @@ btnTransfer.addEventListener('click', function (e) {
 
     //Update UI
     updateUI(currentAccount);
+
+    clearInterval(timer);
+    timer = startLogOutTimer();
   }
 });
 
@@ -359,6 +365,9 @@ btnLoan.addEventListener('click', function (e) {
 
       //Update UI
       updateUI(currentAccount);
+      //reset timer
+      clearInterval(timer);
+      timer = startLogOutTimer();
     }, 2500);
   }
   inputLoanAmount.value = '';
@@ -380,6 +389,11 @@ btnClose.addEventListener('click', function (e) {
 
     //Delete account
     accounts.splice(index, 1);
+    
+    //steps to close the session correctly
+    clearInterval(timer);
+    currentAccount = null;
+    labelWelcome.textContent = `Log in to get started`;
 
     //Hide UI
     containerApp.style.opacity = 0;
